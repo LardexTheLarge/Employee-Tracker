@@ -73,7 +73,7 @@ const prompts = {
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "L@rdexTheL@rge22",
   database: "employee_db",
 });
 
@@ -83,24 +83,30 @@ function start() {
       db.query("SELECT * FROM department", function (err, results, fields) {
         console.table(results);
       });
-      start();
     } else if (answer.menuList === "View Roles") {
-      db.query("SELECT * FROM role", function (err, results, fields) {
+      let sql = `SELECT role.id AS id, role.title AS title, department.name AS department, role.salary AS salary FROM role JOIN department ON role.department_id = department.id;`;
+      db.query(sql, function (err, results, fields) {
         console.table(results);
       });
     } else if (answer.menuList === "View Employees") {
-      db.query("SELECT * FROM employee", function (err, results, fields) {
+      let sql =
+        "SELECT employee.id AS id, employee.first_name AS first, employee.last_name AS last, role.title AS role, employee.manager_id AS manager FROM employee JOIN role ON employee.role_id = role.id;";
+      db.query(sql, function (err, results, fields) {
         console.table(results);
       });
     } else if (answer.menuList === "Add a Department") {
-      //TODO: add department
       inquirer.prompt(prompts.addDep).then((depAnswers) => {
         const depResults = JSON.stringify(depAnswers.addDep);
-        console.log(depAnswers.addDep);
-        db.query(`INSERT INTO department(name) VALUES(${depAnswers.addDep});`);
+        console.log(`${depAnswers.addDep} added successfully`);
+        db.query(`INSERT INTO department(name) VALUES(${depResults});`);
       });
     } else if (answer.menuList === "Add a Role") {
-      //TODO: add role
+      inquirer.prompt(prompts.addRole).then((roleAnswers) => {
+        console.log(`${roleAnswers.title} added successfully`);
+        db.query(
+          `INSERT INTO role(title, salary, department_id) VALUES("${roleAnswers.title}", ${roleAnswers.salary}, ${roleAnswers.depRole});`
+        );
+      });
     } else if (answer.menuList === "Add an Employee") {
       //TODO: add employee
     } else if (answer.menuList === "Update Existing Employee") {

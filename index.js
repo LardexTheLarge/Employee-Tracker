@@ -18,6 +18,17 @@ const menu = {
   name: "menuList",
 };
 
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "L@rdexTheL@rge22",
+  database: "employee_db",
+});
+
+const roles = db.query("SELECT * FROM role");
+const departments = db.query("SELECT * FROM department");
+const managers = db.query("SELECT * FROM employee");
+
 const prompts = {
   addDep: {
     type: "input",
@@ -36,9 +47,15 @@ const prompts = {
       name: "salary",
     },
     {
-      type: "input",
+      name: "departmentId",
+      type: "list",
+      // choices: departments.map((departmentId) => {
+      //   return {
+      //     name: departmentId.name,
+      //     value: departmentId.id,
+      //   };
+      // }),
       message: "Enter Role's Department:",
-      name: "depRole",
     },
   ],
   addEmp: [
@@ -69,13 +86,6 @@ const prompts = {
     name: "update",
   },
 };
-
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "L@rdexTheL@rge22",
-  database: "employee_db",
-});
 
 function start() {
   inquirer.prompt(menu).then((answer) => {

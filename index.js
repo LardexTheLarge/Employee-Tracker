@@ -32,19 +32,49 @@ const db = mysql.createConnection({
   database: "employee_db",
 });
 
-const managers = db.query("SELECT * FROM employee");
-const roles = db.query("SELECT * FROM role");
+// const managers = db.query("SELECT * FROM employee");
+// const roles = db.query("SELECT * FROM role");
 
-const departments = () => {
-  db.query(
-    "SELECT department.id, department.name AS department FROM department;",
-    function (err, results) {
-      console.table(results);
-    }
-  );
+const addRoles = () => {
+  db.query("SELECT * FROM department;", function (err, results) {
+    let departments = results;
+    console.log(results);
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Enter Role's Title:",
+          name: "title",
+        },
+        {
+          type: "input",
+          message: "Enter Role's Salary:",
+          name: "salary",
+        },
+        {
+          name: "departmentId",
+          message: "Enter Role's Department:",
+          type: "list",
+          choices: departments.map((departmentId) => {
+            return {
+              name: departmentId.name,
+              value: departmentId.id,
+            };
+          }),
+        },
+      ])
+      .then((answers) => {
+        console.log(answers);
+        db.query(`INSERT INTO role SET ?`, {
+          title: answers.title,
+          salary: answers.salary,
+          department_id: answers.departmentId,
+        });
+
+        menu();
+      });
+  });
 };
-
-console.log(departments);
 
 const prompts = {
   addDep: {
@@ -52,24 +82,24 @@ const prompts = {
     message: "Enter New Department Name:",
     name: "addDep",
   },
-  addRole: [
-    {
-      type: "input",
-      message: "Enter Role's Title:",
-      name: "title",
-    },
-    {
-      type: "input",
-      message: "Enter Role's Salary:",
-      name: "salary",
-    },
-    {
-      name: "departmentId",
-      message: "Enter Role's Department:",
-      type: "list",
-      choices: departments,
-    },
-  ],
+  // addRole: [
+  //   {
+  //     type: "input",
+  //     message: "Enter Role's Title:",
+  //     name: "title",
+  //   },
+  //   {
+  //     type: "input",
+  //     message: "Enter Role's Salary:",
+  //     name: "salary",
+  //   },
+  //   {
+  //     name: "departmentId",
+  //     message: "Enter Role's Department:",
+  //     type: "list",
+  //     choices: departments,
+  //   },
+  // ],
   addEmp: [
     {
       type: "input",
@@ -110,12 +140,7 @@ const prompts = {
     },
   ],
 };
-// .map((departmentId) => {
-//         return {
-//           name: departmentId.name,
-//           value: departmentId.id,
-//         };
-//       }),
+
 function start(answer) {
   console.log(answer);
   {
@@ -157,11 +182,7 @@ function start(answer) {
 
       //ADD role
     } else if (answer === "Add a Role") {
-      inquirer.prompt(prompts.addRole).then((roleAnswers) => {
-        db.query(
-          `INSERT INTO role(title, salary, department_id) VALUES("${roleAnswers.title}", ${roleAnswers.salary}, ${roleAnswers.departmentId});`
-        );
-      });
+      addRoles();
 
       //ADD employee
     } else if (answer === "Add an Employee") {

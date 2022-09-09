@@ -70,7 +70,6 @@ const addRoles = () => {
           salary: answers.salary,
           department_id: answers.departmentId,
         });
-
         menu();
       });
   });

@@ -23,6 +23,8 @@ Copy over the program.
 
 First, instal all npm packages by inputing 'npm i' into the terminal. Second, apply your mysql login to the index.js file. Third, run the schema.sql and seeds.sql files to input the correct data or make all you own employees, roles and departments. Finally, input node index.js into the terminal to start the program.
 
+VIDEO LINK:
+https://drive.google.com/file/d/1EExFj8raharW_GS58l7Oa4b1Fw5feRS3/view
 ## Credits
 
 Just me

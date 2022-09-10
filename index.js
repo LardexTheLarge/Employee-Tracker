@@ -28,7 +28,7 @@ const menu = () => {
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "L@rdexTheL@rge22",
+  password: "",
   database: "employee_db",
 });
 

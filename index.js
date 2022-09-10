@@ -32,13 +32,9 @@ const db = mysql.createConnection({
   database: "employee_db",
 });
 
-// const managers = db.query("SELECT * FROM employee");
-// const roles = db.query("SELECT * FROM role");
-
 const addRoles = () => {
   db.query("SELECT * FROM department;", function (err, results) {
     let departments = results;
-    console.log(results);
     inquirer
       .prompt([
         {
@@ -75,52 +71,117 @@ const addRoles = () => {
   });
 };
 
+// const addEmployee = async () => {
+//   try {
+//     console.log("Employee Add");
+
+//     let roles = await db.query("SELECT * FROM role;");
+
+//     let managers = await db.query("SELECT * FROM employee;");
+
+//     let answer = await inquirer.prompt([
+//       {
+//         name: "firstName",
+//         type: "input",
+//         message: "What is the first name of this Employee?",
+//       },
+//       {
+//         name: "lastName",
+//         type: "input",
+//         message: "What is the last name of this Employee?",
+//       },
+//       {
+//         name: "employeeRoleId",
+//         type: "list",
+//         choices: roles.map((role) => {
+//           return {
+//             name: role.title,
+//             value: role.id,
+//           };
+//         }),
+//         message: "What is this Employee's role id?",
+//       },
+//       {
+//         name: "employeeManagerId",
+//         type: "list",
+//         choices: managers.map((manager) => {
+//           return {
+//             name: manager.first_name + " " + manager.last_name,
+//             value: manager.id,
+//           };
+//         }),
+//         message: "What is this Employee's Manager's Id?",
+//       },
+//     ]);
+
+//     let result = await db.query("INSERT INTO employee SET ?", {
+//       first_name: answer.firstName,
+//       last_name: answer.lastName,
+//       role_id: answer.employeeRoleId,
+//       manager_id: answer.employeeManagerId,
+//     });
+
+//     console.log(`${answer.firstName} ${answer.lastName} added successfully.\n`);
+//     menu();
+//   } catch (err) {
+//     console.log(err);
+//     menu();
+//   }
+// };
+
+const addEmployee = () => {
+  var employee = db.query("SELECT * FROM employee;");
+  console.log(employee);
+  db.query(" SELECT * FROM role;", function (err, results) {
+    let roles = results;
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Enter employee's first name:",
+          name: "firstName",
+        },
+        {
+          type: "input",
+          message: "Enter employee's last name:",
+          name: "lastName",
+        },
+        {
+          type: "list",
+          message: "Enter employee's role:",
+          name: "empRole",
+          choices: roles.map((role) => {
+            return {
+              name: role.title,
+              value: role.id,
+            };
+          }),
+        },
+        {
+          type: "list",
+          message: "Enter employee's manager:",
+          name: "empManager",
+          choices: roles.map((manager) => {
+            return {
+              name: manager.first_name + " " + manager.last_name,
+              value: manager.id,
+            };
+          }),
+        },
+      ])
+      .then((answers) => {
+        db.query("INSERT INTO employee SET ?", {
+          first_name: answers.firstName,
+          last_name: answers.lastName,
+          role_id: answers.empRole,
+          manager_id: answers.empManager,
+        });
+        menu();
+      });
+  });
+};
+
 const prompts = {
-  addDep: {
-    type: "input",
-    message: "Enter New Department Name:",
-    name: "addDep",
-  },
-  // addRole: [
-  //   {
-  //     type: "input",
-  //     message: "Enter Role's Title:",
-  //     name: "title",
-  //   },
-  //   {
-  //     type: "input",
-  //     message: "Enter Role's Salary:",
-  //     name: "salary",
-  //   },
-  //   {
-  //     name: "departmentId",
-  //     message: "Enter Role's Department:",
-  //     type: "list",
-  //     choices: departments,
-  //   },
-  // ],
-  addEmp: [
-    {
-      type: "input",
-      message: "Enter employee's first name:",
-      name: "firstName",
-    },
-    {
-      type: "input",
-      message: "Enter employee's last name:",
-      name: "lastName",
-    },
-    {
-      type: "input",
-      message: "Enter employee's role:",
-      name: "empRole",
-    },
-    {
-      type: "input",
-      message: "Enter employee's manager:",
-      name: "empManager",
-    },
-  ],
   updateEmp: [
     {
       type: "input",
@@ -185,11 +246,7 @@ function start(answer) {
 
       //ADD employee
     } else if (answer === "Add an Employee") {
-      inquirer.prompt(prompts.addEmp).then((empAnswers) => {
-        db.query(
-          `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES("${empAnswers.firstName}", "${empAnswers.lastName}", ${empAnswers.empRole},${empAnswers.empManager});`
-        );
-      });
+      addEmployee();
 
       //UPDATE employee
     } else if (answer === "Update Existing Employee") {

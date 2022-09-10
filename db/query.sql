@@ -1,7 +1,25 @@
-SELECT role.id AS id,
-role.title AS title,
-department.name AS department,
-role.salary AS salary
-FROM role 
-JOIN department 
-ON role.department_id = department.id;
+-- SELECT e.id AS ID, 
+-- e.first_name AS First, 
+-- e.last_name AS Last,
+-- e.role_id AS Role,
+-- r.salary AS Salary,
+-- m.last_name AS Manager, 
+-- d.name AS Department 
+-- from employee e 
+-- LEFT JOIN employee m ON e.manager_id = m.id 
+-- LEFT JOIN role r ON e.role_id = r.title 
+-- LEFT JOIN department d
+-- ON r.department_id = d.id;
+
+SELECT e.id AS ID, 
+e.first_name AS First, 
+e.last_name AS Last,
+r.title AS Role,
+r.salary AS Salary,
+m.last_name AS Manager, 
+d.name AS Department 
+from employee e 
+LEFT JOIN employee m ON e.manager_id = m.id 
+LEFT JOIN role r ON e.role_id = r.id 
+LEFT JOIN department d
+ON r.department_id = d.id;
